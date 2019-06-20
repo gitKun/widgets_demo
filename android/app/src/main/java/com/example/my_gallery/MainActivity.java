@@ -1,4 +1,4 @@
-package com.example.kun.dr.widget_demos;
+package com.example.my_gallery;
 
 import android.os.Bundle;
 import io.flutter.app.FlutterActivity;

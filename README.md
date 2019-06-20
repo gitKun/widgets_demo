@@ -1,6 +1,6 @@
-# widget_demos
+# my_gallery
 
-Flutter widgets exp
+A new Flutter project.
 
 ## Getting Started
 

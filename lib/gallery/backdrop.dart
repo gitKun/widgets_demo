@@ -1,24 +1,23 @@
 import 'dart:math' as math;
-import 'dart:ui';
 
-import 'package:flutter/animation.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
-const double _kFrontHeadingHeight = 32.0;
-const double _kFrontClosedHeight = 92.0;
-const double _kBackAppBarHeight = 56.0;
+const double _kFrontHeadingHeight = 32.0; // front layer beveled rectangle
+const double _kFrontClosedHeight = 92.0; // front layer height when closed
+const double _kBackAppBarHeight = 56.0; // back layer (options) appbar height
 
+// The size of the front layer heading's left and right beveled corners.
 final Animatable<BorderRadius> _kFrontHeadingBevelRadius = BorderRadiusTween(
-    begin: const BorderRadius.only(
-      topLeft: Radius.circular(12.0),
-      topRight: Radius.circular(12.0),
-    ),
-    end: const BorderRadius.only(
-      topLeft: Radius.circular(_kFrontHeadingHeight),
-      topRight: Radius.circular(_kFrontHeadingHeight),
-    ));
+  begin: const BorderRadius.only(
+    topLeft: Radius.circular(12.0),
+    topRight: Radius.circular(12.0),
+  ),
+  end: const BorderRadius.only(
+    topLeft: Radius.circular(_kFrontHeadingHeight),
+    topRight: Radius.circular(_kFrontHeadingHeight),
+  ),
+);
 
 class _TappableWhileStatusIs extends StatefulWidget {
   const _TappableWhileStatusIs(
@@ -31,17 +30,19 @@ class _TappableWhileStatusIs extends StatefulWidget {
   final AnimationController controller;
   final AnimationStatus status;
   final Widget child;
+
   @override
-  __TappableWhileStatusIsState createState() => __TappableWhileStatusIsState();
+  _TappableWhileStatusIsState createState() => _TappableWhileStatusIsState();
 }
 
-class __TappableWhileStatusIsState extends State<_TappableWhileStatusIs> {
+class _TappableWhileStatusIsState extends State<_TappableWhileStatusIs> {
   bool _active;
 
   @override
   void initState() {
     super.initState();
     widget.controller.addStatusListener(_handleStatusChange);
+    _active = widget.controller.status == widget.status;
   }
 
   @override
@@ -92,8 +93,9 @@ class _CrossFadeTransition extends AnimatedWidget {
 
     final double opacity2 = CurvedAnimation(
       parent: progress,
-      curve: const Interval(0.5, 0.1),
+      curve: const Interval(0.5, 1.0),
     ).value;
+
     return Stack(
       alignment: alignment,
       children: <Widget>[
@@ -131,6 +133,7 @@ class _BackAppBar extends StatelessWidget {
   final Widget leading;
   final Widget title;
   final Widget trailing;
+
   @override
   Widget build(BuildContext context) {
     final List<Widget> children = <Widget>[
@@ -153,6 +156,7 @@ class _BackAppBar extends StatelessWidget {
         ),
       );
     }
+
     final ThemeData theme = Theme.of(context);
 
     return IconTheme.merge(
@@ -184,6 +188,7 @@ class Backdrop extends StatefulWidget {
   final Widget frontHeading;
   final Widget backTitle;
   final Widget backLayer;
+
   @override
   _BackdropState createState() => _BackdropState();
 }
@@ -194,12 +199,9 @@ class _BackdropState extends State<Backdrop>
   AnimationController _controller;
   Animation<double> _frontOpacity;
 
-  static final Animatable<double> _frontOpcityTween = Tween<double>(
-    begin: 0.2,
-    end: 1.0,
-  ).chain(
-    CurveTween(curve: const Interval(0.0, 0.4, curve: Curves.easeInOut)),
-  );
+  static final Animatable<double> _frontOpacityTween =
+      Tween<double>(begin: 0.2, end: 1.0).chain(
+          CurveTween(curve: const Interval(0.0, 0.4, curve: Curves.easeInOut)));
 
   @override
   void initState() {
@@ -209,7 +211,7 @@ class _BackdropState extends State<Backdrop>
       value: 1.0,
       vsync: this,
     );
-    _frontOpacity = _controller.drive(_frontOpcityTween);
+    _frontOpacity = _controller.drive(_frontOpacityTween);
   }
 
   @override
@@ -219,6 +221,8 @@ class _BackdropState extends State<Backdrop>
   }
 
   double get _backdropHeight {
+    // Warning: this can be safely called from the event handlers but it may
+    // not be called at build time.
     final RenderBox renderBox = _backdropKey.currentContext.findRenderObject();
     return math.max(
         0.0, renderBox.size.height - _kBackAppBarHeight - _kFrontClosedHeight);
@@ -231,18 +235,16 @@ class _BackdropState extends State<Backdrop>
 
   void _handleDragEnd(DragEndDetails details) {
     if (_controller.isAnimating ||
-        _controller.status == AnimationStatus.completed) {
-      return;
-    }
+        _controller.status == AnimationStatus.completed) return;
+
     final double flingVelocity =
         details.velocity.pixelsPerSecond.dy / _backdropHeight;
-    if (flingVelocity < 0.0) {
+    if (flingVelocity < 0.0)
       _controller.fling(velocity: math.max(2.0, -flingVelocity));
-    } else if (flingVelocity > 0.0) {
+    else if (flingVelocity > 0.0)
       _controller.fling(velocity: math.min(-2.0, -flingVelocity));
-    } else {
+    else
       _controller.fling(velocity: _controller.value < 0.5 ? -2.0 : 2.0);
-    }
   }
 
   void _toggleFrontLayer() {
@@ -252,14 +254,16 @@ class _BackdropState extends State<Backdrop>
     _controller.fling(velocity: isOpen ? -2.0 : 2.0);
   }
 
-  Widget _buildStask(BuildContext context, BoxConstraints constraints) {
-    final Animation<RelativeRect> frontRelativeRect = _controller.drive(
-      RelativeRectTween(
-          begin: RelativeRect.fromLTRB(
-              0.0, constraints.biggest.height - _kFrontClosedHeight, 0.0, 0.0),
-          end: const RelativeRect.fromLTRB(0.0, _kBackAppBarHeight, 0.0, 0.0)),
-    );
+  Widget _buildStack(BuildContext context, BoxConstraints constraints) {
+    final Animation<RelativeRect> frontRelativeRect =
+        _controller.drive(RelativeRectTween(
+      begin: RelativeRect.fromLTRB(
+          0.0, constraints.biggest.height - _kFrontClosedHeight, 0.0, 0.0),
+      end: const RelativeRect.fromLTRB(0.0, _kBackAppBarHeight, 0.0, 0.0),
+    ));
+
     final List<Widget> layers = <Widget>[
+      // Back layer
       Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
@@ -268,20 +272,14 @@ class _BackdropState extends State<Backdrop>
             title: _CrossFadeTransition(
               progress: _controller,
               alignment: AlignmentDirectional.centerStart,
-              child0: Semantics(
-                namesRoute: true,
-                child: widget.frontTitle,
-              ),
-              child1: Semantics(
-                namesRoute: true,
-                child: widget.backTitle,
-              ),
+              child0: Semantics(namesRoute: true, child: widget.frontTitle),
+              child1: Semantics(namesRoute: true, child: widget.backTitle),
             ),
             trailing: IconButton(
               onPressed: _toggleFrontLayer,
               tooltip: 'Toggle options page',
               icon: AnimatedIcon(
-                icon: AnimatedIcons.close_menu,
+                icon: AnimatedIcons.close_menu, //AnimatedIcons.home_menu,
                 progress: _controller,
               ),
             ),
@@ -290,16 +288,17 @@ class _BackdropState extends State<Backdrop>
             child: Visibility(
               child: widget.backLayer,
               visible: _controller.status != AnimationStatus.completed,
-              maintainAnimation: true,
+              maintainState: true,
             ),
           ),
         ],
       ),
+      // Front layer
       PositionedTransition(
         rect: frontRelativeRect,
         child: AnimatedBuilder(
           animation: _controller,
-          builder: (BuildContext ctx, Widget chd) {
+          builder: (BuildContext context, Widget child) {
             return PhysicalShape(
               elevation: 12.0,
               color: Theme.of(context).canvasColor,
@@ -310,7 +309,7 @@ class _BackdropState extends State<Backdrop>
                 ),
               ),
               clipBehavior: Clip.antiAlias,
-              child: chd,
+              child: child,
             );
           },
           child: _TappableWhileStatusIs(
@@ -324,19 +323,25 @@ class _BackdropState extends State<Backdrop>
         ),
       ),
     ];
-    /* front “heading” 是一个(通常是透明的)小部件，堆叠在前端层的顶部和顶部。它增加了对上下拖动前一层的支持，以及用一个点击来打开和关闭前一层的支持。它可能会模糊前一层最顶层的子元素。 */
+
+    // The front "heading" is a (typically transparent) widget that's stacked on
+    // top of, and at the top of, the front layer. It adds support for dragging
+    // the front layer up and down and for opening and closing the front layer
+    // with a tap. It may obscure part of the front layer's topmost child.
     if (widget.frontHeading != null) {
       layers.add(
         PositionedTransition(
           rect: frontRelativeRect,
-          child: Container(
-            alignment: Alignment.topLeft,
-            child: GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onTap: _toggleFrontLayer,
-              onVerticalDragUpdate: _handleDragUpdate,
-              onVerticalDragEnd: _handleDragEnd,
-              child: widget.frontHeading,
+          child: ExcludeSemantics(
+            child: Container(
+              alignment: Alignment.topLeft,
+              child: GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onTap: _toggleFrontLayer,
+                onVerticalDragUpdate: _handleDragUpdate,
+                onVerticalDragEnd: _handleDragEnd,
+                child: widget.frontHeading,
+              ),
             ),
           ),
         ),
@@ -351,6 +356,6 @@ class _BackdropState extends State<Backdrop>
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(builder: _buildStask);
+    return LayoutBuilder(builder: _buildStack);
   }
 }
