@@ -9,9 +9,8 @@ class CupertinoProgressIndicatorDemo extends StatelessWidget {
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
-        // We're specifying a back label here because the previous page is a
-        // Material page. CupertinoPageRoutes could auto-populate these back
-        // labels.
+        // 在这里指定了一个back标签， 因为前面的页面是一个Material页面。
+        // CupertinoPageRoutes可以自动填充这些返回标签。
         previousPageTitle: 'Cupertino',
         middle: const Text('Activity Indicator'),
         trailing: CupertinoDemoDocumentationButton(routeName),

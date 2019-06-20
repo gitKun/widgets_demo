@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-// import 'icons.dart';
-// import '../demo/all.dart';
+import 'icons.dart';
+import '../demo/all.dart';
 
 class GalleryDemoCategory {
   const GalleryDemoCategory._({
@@ -28,30 +28,30 @@ class GalleryDemoCategory {
   }
 }
 
-// const GalleryDemoCategory _kDemos = GalleryDemoCategory._(
-//   name: 'Studies',
-//   icon: GalleryIcons.animation,
-// );
+const GalleryDemoCategory _kDemos = GalleryDemoCategory._(
+  name: 'Studies',
+  icon: GalleryIcons.animation,
+);
 
-// const GalleryDemoCategory _kStyle = GalleryDemoCategory._(
-//   name: 'Style',
-//   icon: GalleryIcons.custom_typography,
-// );
+const GalleryDemoCategory _kStyle = GalleryDemoCategory._(
+  name: 'Style',
+  icon: GalleryIcons.custom_typography,
+);
 
-// const GalleryDemoCategory _kMaterialComponents = GalleryDemoCategory._(
-//   name: 'Material',
-//   icon: GalleryIcons.category_mdc,
-// );
+const GalleryDemoCategory _kMaterialComponents = GalleryDemoCategory._(
+  name: 'Material',
+  icon: GalleryIcons.category_mdc,
+);
 
-// const GalleryDemoCategory _kCupertinoComponents = GalleryDemoCategory._(
-//   name: 'Cupertino',
-//   icon: GalleryIcons.phone_iphone,
-// );
+const GalleryDemoCategory _kCupertinoComponents = GalleryDemoCategory._(
+  name: 'Cupertino',
+  icon: GalleryIcons.phone_iphone,
+);
 
-// const GalleryDemoCategory _kMedia = GalleryDemoCategory._(
-//   name: 'Media',
-//   icon: GalleryIcons.drive_video,
-// );
+const GalleryDemoCategory _kMedia = GalleryDemoCategory._(
+  name: 'Media',
+  icon: GalleryIcons.drive_video,
+);
 
 class GalleryDemo {
   const GalleryDemo({
@@ -471,15 +471,15 @@ List<GalleryDemo> _buildGalleryDemos() {
     // ),
 
     // Cupertino Components
-    // GalleryDemo(
-    //   title: 'Activity Indicator',
-    //   icon: GalleryIcons.cupertino_progress,
-    //   category: _kCupertinoComponents,
-    //   routeName: CupertinoProgressIndicatorDemo.routeName,
-    //   documentationUrl:
-    //       'https://docs.flutter.io/flutter/cupertino/CupertinoActivityIndicator-class.html',
-    //   buildRoute: (BuildContext context) => CupertinoProgressIndicatorDemo(),
-    // ),
+    GalleryDemo(
+      title: 'Activity Indicator',
+      icon: GalleryIcons.cupertino_progress,
+      category: _kCupertinoComponents,
+      routeName: CupertinoProgressIndicatorDemo.routeName,
+      documentationUrl:
+          'https://docs.flutter.io/flutter/cupertino/CupertinoActivityIndicator-class.html',
+      buildRoute: (BuildContext context) => CupertinoProgressIndicatorDemo(),
+    ),
     // GalleryDemo(
     //   title: 'Alerts',
     //   icon: GalleryIcons.dialogs,
