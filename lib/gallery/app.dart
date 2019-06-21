@@ -147,7 +147,7 @@ class _GalleryAppState extends State<GalleryApp> {
             child: _applyTextScaleFactor(
               /*
               在这里使用一个空白的CupertinoTheme，
-              除了显示标准iOS外观的亮度外，不要过渡到材质的原色等。
+              除了显示标准iOS外观的亮度外，不要过渡到 Material 的原色等。
               */
               CupertinoTheme(
                 data: CupertinoThemeData(

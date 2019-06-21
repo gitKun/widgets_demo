@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'demos.dart';
-import 'example_code_parser.dart';
-import 'syntax_highligter.dart';
+// import 'example_code_parser.dart';
+// import 'syntax_highligter.dart';
 
 class ComponentDemoTabData {
   ComponentDemoTabData({
